@@ -1,0 +1,39 @@
+from flask_restful import Resource, abort
+from datetime import datetime, timedelta
+from .decorator import with_auth
+from .util import SECRET_KEY
+import jwt
+
+from ....data.tables import User as UserTable
+from ....data import session
+
+from .parser import construct_auth_parser
+
+auth_parser = construct_auth_parser()
+
+EXPIRATION_TIME = 60 
+
+class Auth(Resource):
+  def post(self):
+    args = auth_parser.parse_args()
+
+    user = UserTable.query.filter_by(username=args['username']).first_or_404(description='User not found')
+
+    if not user.check_password(args['password']):
+      abort(401, message='Wrong password')
+
+    payload = {
+      'id': user.id,
+      'roles': user.roles,
+      'exp': datetime.utcnow() + timedelta(minutes=EXPIRATION_TIME)
+    }
+    jwt_encoded = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
+
+    return { 'auth-token': jwt_encoded }, 200
+
+  @with_auth()
+  def get(self, user_id):
+    user = UserTable.query.filter_by(id=user_id).first_or_404(description='User not found')
+
+    return user.as_dict()
+
