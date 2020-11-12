@@ -17,6 +17,8 @@ def with_auth(*required_roles):
       my_roles = set()
       try:
         user_id, my_roles = get_user_info(args['auth-token'])
+      except jwt.ExpiredSignatureError:
+        abort(401, message='Expired token')
       except:
         abort(401, message='Invalid or null auth token')
 
