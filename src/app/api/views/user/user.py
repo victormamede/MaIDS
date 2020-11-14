@@ -58,9 +58,9 @@ class UserWithId(Resource):
 
     try:
       session.commit()
-    except:
+    except Exception as e:
       session.rollback()
-      abort(409, message='User already exists')
+      abort(409, message='Could not update user')
 
     return user.as_dict(), 200
 

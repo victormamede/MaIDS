@@ -40,6 +40,5 @@ def get_user_info(token):
     return 0, Role.all()
 
   payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-  my_roles = decode_roles(payload['roles'])
 
-  return payload['id'], my_roles
+  return payload['id'], decode_roles(payload['roles'])

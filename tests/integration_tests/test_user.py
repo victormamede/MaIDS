@@ -31,8 +31,29 @@ class TestUser(AppTestCase):
     to_change = { 'username': 'changeduser' }
 
     resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    json = resp.get_json()
 
-    self.assertEqual(to_change['username'], resp.get_json()['username'])
+    self.assertEqual(to_change['username'], json['username'])
+
+  def changes_roles(self):
+    to_change = { 'roles': ['EQUIPMENT'] }
+
+    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    json = resp.get_json()
+
+    self.assertEqual(to_change['roles'], json['roles'])
+
+    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data={}, headers=self.master_header)
+    json = resp.get_json()
+
+    self.assertEqual(to_change['roles'], json['roles'])
+
+    to_change = { 'roles': ['NONE'] }
+
+    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    json = resp.get_json()
+
+    self.assertEqual([], json['roles'])
 
   def deletes_user(self):
     resp = self.client.delete(API_ROUTE + '/' + str(self.mock_user_id), headers=self.master_header)
@@ -49,6 +70,7 @@ class TestUser(AppTestCase):
     self.gets_all_users()
     self.gets_user_with_id()
     self.changes_user()
+    self.changes_roles()
     self.deletes_user()
 
 

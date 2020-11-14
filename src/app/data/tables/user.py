@@ -11,11 +11,12 @@ class User(db.Model):
   password = db.Column(db.String, nullable=False)
   real_name = db.Column(db.String, nullable=False)
   registration_number = db.Column(db.Integer, nullable=False, unique=True)
-  roles = db.Column(db.Integer, nullable=False)
+  _roles = db.Column(db.Integer, nullable=False)
   email = db.Column(db.String, nullable=False)
 
   def __init__(self, **kwargs):
-    kwargs['roles'] = encode_roles(*kwargs['roles'])
+    kwargs['_roles'] = encode_roles(*kwargs['roles'])
+    del kwargs['roles']
 
     password = bcrypt.hashpw(
       kwargs['password'].encode('utf-8'), 
@@ -26,19 +27,23 @@ class User(db.Model):
 
     super().__init__(**kwargs)
 
+  @property
+  def roles(self):
+    return decode_roles(self._roles)
+
+  @roles.setter
+  def roles(self, value):
+    self._roles = encode_roles(*value)
+
   def as_dict(self):
     return {
       'id': self.id,
       'username': self.username,
       'real_name': self.real_name,
       'registration_number': self.registration_number,
-      'roles': [role.name for role in self.decode_roles()],
+      'roles': [role.name for role in self.roles],
       'email': self.email
     }
 
   def check_password(self, password):
     return bcrypt.checkpw(password.encode('utf-8'), self.password)
-
-  def decode_roles(self):
-    return decode_roles(self.roles)
-

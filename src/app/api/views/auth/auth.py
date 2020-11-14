@@ -6,6 +6,7 @@ import jwt
 
 from ....data.tables import User as UserTable
 from ....data import session
+from ....util.auth import encode_roles
 
 from .parser import construct_auth_parser
 
@@ -24,7 +25,7 @@ class Auth(Resource):
 
     payload = {
       'id': user.id,
-      'roles': user.roles,
+      'roles': encode_roles(*user.roles),
       'exp': datetime.utcnow() + timedelta(minutes=EXPIRATION_TIME)
     }
     jwt_encoded = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')

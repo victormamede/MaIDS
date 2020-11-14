@@ -18,7 +18,7 @@ def build_user_update_parser():
   parser.add_argument('password', type=str)
   parser.add_argument('real_name', type=str)
   parser.add_argument('registration_number', type=int)
-  parser.add_argument('roles', type=str, action='append', choices=[role.name for role in list(Role)])
+  parser.add_argument('roles', type=str, action='append', choices=[*[role.name for role in list(Role)], 'NONE'])
   parser.add_argument('email', type=str)
 
   return parser

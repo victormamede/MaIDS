@@ -5,7 +5,11 @@ def encode_roles(*roles):
   encoded = 0
 
   for raw_role in roles:
-    role = Role[raw_role]
+    try:
+      role = Role[raw_role]
+    except KeyError:
+      continue
+
     if(role in used_roles):
       continue
 
