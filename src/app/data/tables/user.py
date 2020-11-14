@@ -8,7 +8,7 @@ class User(db.Model):
 
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String, unique=True, nullable=False)
-  password = db.Column(db.String, nullable=False)
+  _password = db.Column(db.String, nullable=False)
   real_name = db.Column(db.String, nullable=False)
   registration_number = db.Column(db.Integer, nullable=False, unique=True)
   _roles = db.Column(db.Integer, nullable=False)
@@ -23,7 +23,8 @@ class User(db.Model):
       bcrypt.gensalt()
       )
 
-    kwargs['password'] = password
+    kwargs['_password'] = password
+    del kwargs['password']
 
     super().__init__(**kwargs)
 
@@ -46,4 +47,4 @@ class User(db.Model):
     }
 
   def check_password(self, password):
-    return bcrypt.checkpw(password.encode('utf-8'), self.password)
+    return bcrypt.checkpw(password.encode('utf-8'), self._password)
