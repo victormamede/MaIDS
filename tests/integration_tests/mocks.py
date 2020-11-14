@@ -13,3 +13,17 @@ MOCK_LOGIN = {
   'username': 'testuser',
   'password': 'testpass'
 }
+
+MOCK_USER_NO_PERM = {
+  'username': 'testusernoperm',
+  'real_name': 'Test User No Perm',
+  'registration_number': 134,
+  'roles': ['NONE'],
+  'email': 'testnoperm@user.com',
+  'password': 'testpassnoperm'
+}
+
+MOCK_LOGIN_NO_PERM = {
+  'username': 'testusernoperm',
+  'password': 'testpassnoperm'
+}
