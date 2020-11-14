@@ -40,8 +40,13 @@ class TestAuth(AppTestCase):
     resp = self.client.get(API_ROUTE, headers=self.user_header)
     self.assertEqual(MOCK_USER['username'], resp.get_json()['username'])
 
+  def auth_works(self):
+    resp = self.client.get('/api/user', headers=self.user_header)
+    self.assertEqual(resp.status_code, 200)
+
 
   def test_auth(self):
     self.can_authenticate()
     self.cannot_auth_with_wrong_credentials()
     self.gets_user_data()
+    self.auth_works()

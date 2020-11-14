@@ -38,6 +38,7 @@ class User(Resource):
 
     return users, 200
 
+
 class UserWithId(Resource):
   @with_auth(Role.ACCOUNTS)
   def get(self, **kw):

@@ -25,7 +25,7 @@ class Auth(Resource):
 
     payload = {
       'id': user.id,
-      'roles': encode_roles(*user.roles),
+      'roles': encode_roles(*[role.name for role in user.roles]),
       'exp': datetime.utcnow() + timedelta(minutes=EXPIRATION_TIME)
     }
     jwt_encoded = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')

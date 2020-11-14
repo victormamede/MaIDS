@@ -22,6 +22,7 @@ def with_auth(*required_roles):
       except:
         abort(401, message='Invalid or null auth token')
 
+
       for role in required_roles:
         if not role in my_roles:
           abort(401, message="You don't have permission for this")
