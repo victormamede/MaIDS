@@ -8,7 +8,7 @@ class User(db.Model):
 
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String, unique=True, nullable=False)
-  _password = db.Column(db.String, nullable=False)
+  _password = db.Column(db.String)
   real_name = db.Column(db.String, nullable=False)
   registration_number = db.Column(db.Integer, nullable=False, unique=True)
   _roles = db.Column(db.Integer, nullable=False)
@@ -17,14 +17,6 @@ class User(db.Model):
   def __init__(self, **kwargs):
     kwargs['_roles'] = encode_roles(*kwargs['roles'])
     del kwargs['roles']
-
-    password = bcrypt.hashpw(
-      kwargs['password'].encode('utf-8'), 
-      bcrypt.gensalt()
-      )
-
-    kwargs['_password'] = password
-    del kwargs['password']
 
     super().__init__(**kwargs)
 
@@ -46,5 +38,23 @@ class User(db.Model):
       'email': self.email
     }
 
+  @property
+  def password(self):
+    return self._password
+
+  @password.setter
+  def password(self, value):
+    self._password = bcrypt.hashpw(
+      value.encode('utf-8'),
+      bcrypt.gensalt()
+    )
+
+  @property
+  def should_update_password(self):
+    return self._password == None
+
   def check_password(self, password):
+    if(self._password == None):
+      return password == str(self.registration_number)
+
     return bcrypt.checkpw(password.encode('utf-8'), self._password)

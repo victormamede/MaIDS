@@ -6,3 +6,9 @@ def construct_auth_parser():
   parser.add_argument('password', type=str, required=True)
 
   return parser
+
+def construct_password_update_parser():
+  parser = reqparse.RequestParser()
+  parser.add_argument('password', type=str, required=True)
+
+  return parser

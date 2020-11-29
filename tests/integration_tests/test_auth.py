@@ -51,9 +51,25 @@ class TestAuth(AppTestCase):
     resp = self.client.get('/api/user', headers=self.user_header_no_perm)
     self.assertEqual(resp.status_code, 401)
 
+  def can_update_password(self):
+    resp = update_password(self.client, MOCK_USER_NO_PERM['username'], MOCK_USER_NO_PERM['registration_number'], MOCK_LOGIN_NO_PERM['password'])
+    self.assertEqual(resp.status_code, 200)
+
+    resp = update_password(self.client, MOCK_USER['username'], MOCK_USER['registration_number'], MOCK_LOGIN['password'])
+    self.assertEqual(resp.status_code, 200)
+
 
   def test_auth(self):
+    self.can_update_password()
     self.can_authenticate()
     self.cannot_auth_with_wrong_credentials()
     self.gets_user_data()
     self.auth_works()
+
+
+def update_password(client, username, registration_number, password):
+    resp = client.post(API_ROUTE, data={'username': username, 'password': str(registration_number) })
+    header = resp.get_json()
+
+    resp = client.post(API_ROUTE + '/password', headers=header, data={'password': password})
+    return resp
