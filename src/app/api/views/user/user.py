@@ -24,9 +24,9 @@ class User(Resource):
     try:
       session.add(new_user)
       session.commit()
-    except:
+    except Exception as e:
       session.rollback()
-      abort(409, message='User already exists')
+      abort(409, message='Could not create user')
 
 
     return new_user.as_dict(), 201
