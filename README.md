@@ -62,3 +62,7 @@ Create a file named `.env` at the root of the project with the following variabl
 
 - Start the app with `> python src\start.py`
 - Run tests with `> python -m unittest discover tests`
+
+## 5 Todo
+
+- Username and Password validation
