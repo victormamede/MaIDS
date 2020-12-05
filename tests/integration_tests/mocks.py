@@ -25,3 +25,10 @@ MOCK_LOGIN_NO_PERM = {
   'username': 'testusernoperm',
   'password': 'testusernoperm'
 }
+
+MOCK_EQUIPMENT = {
+  'tag': 'TAG0001',
+  'brand': 'TestBrand',
+  'model': 'TestModel',
+  'series': 'TestSeries'
+}

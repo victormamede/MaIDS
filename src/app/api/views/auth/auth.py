@@ -12,7 +12,7 @@ from .parser import construct_auth_parser, construct_password_update_parser
 
 auth_parser = construct_auth_parser()
 
-EXPIRATION_TIME = 60 
+EXPIRATION_TIME = 24
 
 class Auth(Resource):
   def post(self):
@@ -26,7 +26,7 @@ class Auth(Resource):
     payload = {
       'id': user.id,
       'roles': encode_roles(*[role.name for role in user.roles]),
-      'exp': datetime.utcnow() + timedelta(minutes=EXPIRATION_TIME)
+      'exp': datetime.utcnow() + timedelta(hours=EXPIRATION_TIME)
     }
     jwt_encoded = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
 

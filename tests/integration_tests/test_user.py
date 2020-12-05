@@ -1,77 +1,79 @@
 import unittest
 from .config import AppTestCase
 from .mocks import MOCK_USER
+from src.app.util.auth import Role
 
 API_ROUTE = '/api/user'
 
 class TestUser(AppTestCase):
-  def creates_user(self):
-    resp = self.client.post(API_ROUTE, data=MOCK_USER, headers=self.master_header)
+  def creates_user(self, client):
+    resp = client.post(API_ROUTE, data=MOCK_USER)
     self.mock_user_id = resp.get_json()['id']
 
     self.assertEqual(MOCK_USER['username'], resp.get_json()['username'])
 
-  def user_cant_have_same_data(self):
-    resp = self.client.post(API_ROUTE, data=MOCK_USER, headers=self.master_header)
+  def user_cant_have_same_data(self, client):
+    resp = client.post(API_ROUTE, data=MOCK_USER)
 
     self.assertEqual(resp.status_code, 409)
 
 
-  def gets_all_users(self):
-    resp = self.client.get(API_ROUTE, headers=self.master_header)
+  def gets_all_users(self, client):
+    resp = client.get(API_ROUTE)
 
     self.assertIn(MOCK_USER['username'], [user['username'] for user in resp.get_json()])
 
-  def gets_user_with_id(self):
-    resp = self.client.get(API_ROUTE + '/' + str(self.mock_user_id), headers=self.master_header)
+  def gets_user_with_id(self, client):
+    resp = client.get(API_ROUTE + '/' + str(self.mock_user_id))
     
     self.assertEqual(MOCK_USER['username'], resp.get_json()['username'])
 
-  def changes_user(self):
+  def changes_user(self, client):
     to_change = { 'username': 'changeduser' }
 
-    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    resp = client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change)
     json = resp.get_json()
 
     self.assertEqual(to_change['username'], json['username'])
 
-  def changes_roles(self):
+  def changes_roles(self, client):
     to_change = { 'roles': ['EQUIPMENT'] }
 
-    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    resp = client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change)
     json = resp.get_json()
 
     self.assertEqual(to_change['roles'], json['roles'])
 
-    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data={}, headers=self.master_header)
+    resp = client.put(API_ROUTE + '/' + str(self.mock_user_id), data={})
     json = resp.get_json()
 
     self.assertEqual(to_change['roles'], json['roles'])
 
     to_change = { 'roles': ['NONE'] }
 
-    resp = self.client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change, headers=self.master_header)
+    resp = client.put(API_ROUTE + '/' + str(self.mock_user_id), data=to_change)
     json = resp.get_json()
 
     self.assertEqual([], json['roles'])
 
-  def deletes_user(self):
-    resp = self.client.delete(API_ROUTE + '/' + str(self.mock_user_id), headers=self.master_header)
+  def deletes_user(self, client):
+    resp = client.delete(API_ROUTE + '/' + str(self.mock_user_id))
 
     self.assertEqual(resp.status_code, 200)
 
-    resp = self.client.get(API_ROUTE + '/' + str(self.mock_user_id), headers=self.master_header)
+    resp = client.get(API_ROUTE + '/' + str(self.mock_user_id))
 
     self.assertEqual(resp.status_code, 404)
 
   def test_user(self):
-    self.creates_user()
-    self.user_cant_have_same_data()
-    self.gets_all_users()
-    self.gets_user_with_id()
-    self.changes_user()
-    self.changes_roles()
-    self.deletes_user()
+    with self.assertNeedsPermission(Role.ACCOUNTS) as client:
+      self.creates_user(client)
+      self.user_cant_have_same_data(client)
+      self.gets_all_users(client)
+      self.gets_user_with_id(client)
+      self.changes_user(client)
+      self.changes_roles(client)
+      self.deletes_user(client)
 
 
 
