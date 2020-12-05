@@ -53,7 +53,7 @@ class PermissionMocker():
     if tb is None:
       self.client.delete('api/user/' + str(self.permission_user_data['id']), headers=self.master_header)
       self.client.delete('api/user/' + str(self.no_permission_user_data['id']), headers=self.master_header)
-    else:
+    elif tb is PermissionException:
       self.parent.fail('Error asserting permissions')
 
   def _get_args(self, kwargs, with_permissions):
@@ -74,40 +74,42 @@ class PermissionMocker():
     }
 
   def get(self, url, **kwargs):
-    resp = self.client.get(url, **self._get_args(kwargs, False))
-    self.parent.assertEqual(resp.status_code, 401)
-
+    no_resp = self.client.get(url, **self._get_args(kwargs, False))
     resp = self.client.get(url, **self._get_args(kwargs, True))
-    self.parent.assertNotEqual(resp.status_code, 401)
+
+    self._check_result(resp.status_code, no_resp.status_code)
 
     return resp
 
   def post(self, url, **kwargs):
-    resp = self.client.post(url, **self._get_args(kwargs, False))
-    self.parent.assertEqual(resp.status_code, 401)
-
+    no_resp = self.client.post(url, **self._get_args(kwargs, False))
     resp = self.client.post(url, **self._get_args(kwargs, True))
-    self.parent.assertNotEqual(resp.status_code, 401)
+
+    self._check_result(resp.status_code, no_resp.status_code)
 
     return resp
 
   def put(self, url, **kwargs):
-    resp = self.client.put(url, **self._get_args(kwargs, False))
-    self.parent.assertEqual(resp.status_code, 401)
-
+    no_resp = self.client.put(url, **self._get_args(kwargs, False))
     resp = self.client.put(url, **self._get_args(kwargs, True))
-    self.parent.assertNotEqual(resp.status_code, 401)
+
+    self._check_result(resp.status_code, no_resp.status_code)
 
     return resp
 
   def delete(self, url, **kwargs):
-    resp = self.client.delete(url, **self._get_args(kwargs, False))
-    self.parent.assertEqual(resp.status_code, 401)
-
+    no_resp = self.client.delete(url, **self._get_args(kwargs, False))
     resp = self.client.delete(url, **self._get_args(kwargs, True))
-    self.parent.assertNotEqual(resp.status_code, 401)
+
+    self._check_result(resp.status_code, no_resp.status_code)
 
     return resp
+
+  def _check_result(self, with_perm_status_code, no_perm_status_code):
+    if with_perm_status_code == 401:
+      raise PermissionException(True)
+    if no_perm_status_code != 401:
+      raise PermissionException(False)
 
 
 PERMISSION_MOCK_USER = { 
@@ -132,3 +134,12 @@ NO_PERMISSION_MOCK_LOGIN = {
   'username': NO_PERMISSION_MOCK_USER['username'],
   'password': NO_PERMISSION_MOCK_USER['registration_number']
 }
+
+class PermissionException(Exception):
+  def __init__(self, with_perm_error):
+    if with_perm_error:
+      message = 'Error while trying to request with required permissions'
+    else:
+      message = 'Error while trying to request without permission'
+
+    super().__init__(message)
