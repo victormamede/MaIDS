@@ -30,3 +30,10 @@ MOCK_EQUIPMENT = {
   'model': 'TestModel',
   'series': 'TestSeries'
 }
+
+MOCK_EQUIPMENT_2 = {
+  'tag': 'TAG0002',
+  'brand': 'TestBrand',
+  'model': 'TestModel',
+  'series': 'TestSeries'
+}

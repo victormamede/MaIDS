@@ -17,3 +17,12 @@ def build_equipment_update_parser():
   parser.add_argument('series', type=str)
 
   return parser
+
+def build_equipment_filter_parser():
+  parser = reqparse.RequestParser()
+  parser.add_argument('tag', type=str, location='args')
+  parser.add_argument('brand', type=str, location='args')
+  parser.add_argument('model', type=str, location='args')
+  parser.add_argument('series', type=str, location='args')
+
+  return parser

@@ -2,14 +2,36 @@ from flask_restful import Resource, abort
 from ..auth import with_auth
 from ....util.auth import Role
 
-from .parser import build_equipment_parser, build_equipment_update_parser
+from .parser import (
+  build_equipment_parser,
+  build_equipment_update_parser,
+  build_equipment_filter_parser
+)
 
 from ....data.tables import Equipment as EquipmentTable
 from ....data import session
 
 equipment_creation_parser = build_equipment_parser()
+equipment_filter_parser = build_equipment_filter_parser()
 
 class Equipment(Resource):
+  @with_auth()
+  def get(self):
+    args = equipment_filter_parser.parse_args()
+
+    filters = {}
+    for key in args:
+      if args[key] is None:
+        continue
+
+      search = '%{}%'.format(args[key])
+      filters[key] = search
+
+    results = EquipmentTable.query.filter(*[getattr(EquipmentTable, key).like(filters[key]) for key in filters])
+    equips = [equipment.as_dict() for equipment in results] 
+
+    return equips, 200
+
   @with_auth(Role.EQUIPMENT)
   def post(self):
     args = equipment_creation_parser.parse_args()
@@ -55,3 +77,12 @@ class EquipmentWithId(Resource):
       abort(409, message='Could not update equipment')
 
     return equipment.as_dict(), 200
+  
+  @with_auth(Role.EQUIPMENT)
+  def delete(self, **kw):
+    equipment = EquipmentTable.query.filter_by(id=kw['id']).first_or_404(description='Equipment not found')
+
+    session.delete(equipment)
+    session.commit()
+
+    return { 'message': 'deleted' }, 200
