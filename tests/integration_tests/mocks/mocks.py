@@ -1,10 +1,8 @@
-from src.app.util.auth import Role
-
 MOCK_USER = {
   'username': 'testuser',
   'real_name': 'Test User',
   'registration_number': 123,
-  'roles': [role.name for role in Role.all()],
+  'roles': ['ACCOUNTS', 'EQUIPMENT'],
   'email': 'test@user.com',
 }
 

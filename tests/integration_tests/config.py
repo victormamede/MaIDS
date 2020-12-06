@@ -6,7 +6,8 @@ load_dotenv(dotenv_path='.env.test')
 from src.app import build_app
 from unittest import TestCase
 
-from .permission_mocker import PermissionMocker
+from .mocks.permission_mocker import PermissionMocker
+from .mocks.mock_user import MockUserClient
 
 class AppTestCase(TestCase):
   def setUp(self):
@@ -19,3 +20,6 @@ class AppTestCase(TestCase):
 
   def assertNeedsPermission(self, roles):
     return PermissionMocker(roles, self)
+
+  def mockUserClient(self, roles):
+    return MockUserClient(roles, self)
