@@ -1,14 +1,17 @@
+DEFAULT_MOCK_USER = {
+  'username': 'mockusertest',
+  'real_name': 'Test Mock User',
+  'registration_number': 3502,
+  'email': 'mockusertest@user.com',
+}
+
 class MockUserClient():  
-  def __init__(self, roles, parent, *args):
+  def __init__(self, roles, parent, mock_data = DEFAULT_MOCK_USER):
     self.roles = roles
     self.parent = parent
     self.client = parent.client
     self.master_header = parent.master_header
-
-    if args[0] is None:
-      self.mock_data = DEFAULT_MOCK_USER.copy()
-    else:
-      self.mock_data = args[0].copy()
+    self.mock_data = mock_data.copy()
 
   def __enter__(self):
     # Creates a user with tested permission
@@ -63,10 +66,3 @@ class MockUserClient():
   def delete(self, url, **kwargs):
     resp = self.client.delete(url, **self._get_args(kwargs))
     return resp
-
-DEFAULT_MOCK_USER = {
-  'username': 'mockusertest',
-  'real_name': 'Test Mock User',
-  'registration_number': 3502,
-  'email': 'mockusertest@user.com',
-}

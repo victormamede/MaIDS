@@ -8,9 +8,9 @@ from ....data.tables import User as UserTable
 from ....data import session
 from ....util.auth import encode_roles
 
-from .parser import construct_auth_parser, construct_password_update_parser
+from .parser import build_auth_parser, build_password_update_parser
 
-auth_parser = construct_auth_parser()
+auth_parser = build_auth_parser()
 
 EXPIRATION_TIME = 24
 
@@ -38,7 +38,7 @@ class Auth(Resource):
 
     return user.as_dict()
 
-password_parser = construct_password_update_parser()
+password_parser = build_password_update_parser()
 
 class PasswordUpdate(Resource):
   @with_auth()

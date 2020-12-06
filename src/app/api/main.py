@@ -2,6 +2,7 @@ from flask_restful import Api
 
 from .views.user import User, UserWithId
 from .views.auth import Auth, PasswordUpdate
+from .views.equipment import Equipment, EquipmentWithId
 
 def start_api(app):
   api = Api(app)
@@ -11,5 +12,9 @@ def start_api(app):
 
   add_resource(User, '/user')
   add_resource(UserWithId, '/user/<int:id>')
+
   add_resource(Auth, '/auth')
   add_resource(PasswordUpdate, '/auth/password')
+
+  add_resource(Equipment, '/equipment')
+  add_resource(EquipmentWithId, '/equipment/<int:id>')

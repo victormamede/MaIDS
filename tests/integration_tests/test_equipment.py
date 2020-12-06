@@ -18,15 +18,19 @@ class TestEquipment(AppTestCase):
 
     self.assertEqual(resp.status_code, 409)
   
-  def gets_equipment(self):
-    resp = self.client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
+  def gets_equipment(self, client):
+    resp = client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
 
-    self.assertDictEqual(resp.get_json(), MOCK_EQUIPMENT)
+    equip = MOCK_EQUIPMENT.copy()
+    equip['id'] = self.mock_equipment_id
+
+    self.assertDictEqual(resp.get_json(), equip)
 
 
   def test_equipment(self):
     with self.assertNeedsPermission(Role.EQUIPMENT) as client:
       self.creates_equipment(client)
       self.tags_are_unique(client)
-
-    self.gets_equipment()
+ 
+    with self.mockUserClient([]) as client:
+      self.gets_equipment(client)
