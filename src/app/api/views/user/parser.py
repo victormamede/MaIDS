@@ -20,3 +20,12 @@ def build_user_update_parser():
   parser.add_argument('email', type=str)
 
   return parser
+
+def build_user_filter_parser():
+  parser = reqparse.RequestParser()
+  parser.add_argument('username', type=str, location='args')
+  parser.add_argument('real_name', type=str, location='args')
+  parser.add_argument('registration_number', type=str, location='args')
+  parser.add_argument('email', type=str, location='args')
+
+  return parser

@@ -6,6 +6,14 @@ MOCK_USER = {
   'email': 'test@user.com',
 }
 
+MOCK_USER_2 = {
+  'username': 'testuser_2',
+  'real_name': 'Test User 2',
+  'registration_number': 124,
+  'roles': ['ACCOUNTS', 'EQUIPMENT'],
+  'email': 'test2@user.com',
+}
+
 MOCK_LOGIN = {
   'username': 'testuser',
   'password': 'testpass'
