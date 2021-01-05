@@ -10,7 +10,7 @@ from ....util.auth import Role
 
 user_creation_parser = build_user_creation_parser()
 user_update_parser = build_user_update_parser()
-user_filter_parser = build_user_update_parser()
+user_filter_parser = build_user_filter_parser()
 
 
 class User(Resource):
