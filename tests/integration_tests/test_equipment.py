@@ -6,78 +6,77 @@ from src.app.util.auth import Role
 
 API_ROUTE = '/api/equipment'
 
+
 class TestEquipment(AppTestCase):
-  def creates_equipment(self, client):
-    resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
-    client.post(API_ROUTE, data=MOCK_EQUIPMENT_2) # this will be used in later tests
+    def creates_equipment(self, client):
+        resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
+        client.post(API_ROUTE,
+                    data=MOCK_EQUIPMENT_2)  # this will be used in later tests
 
-    self.mock_equipment_id = resp.get_json()['id']
+        self.mock_equipment_id = resp.get_json()['id']
 
-    self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.status_code, 201)
 
-  def tags_are_unique(self, client):
-    resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
+    def tags_are_unique(self, client):
+        resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
 
-    self.assertEqual(resp.status_code, 409)
+        self.assertEqual(resp.status_code, 409)
 
-  def updates_equipment_info(self, client):
-    update = {
-      'brand': 'NewBrand'
-    }
+    def updates_equipment_info(self, client):
+        update = {'brand': 'NewBrand'}
 
-    resp = client.put(API_ROUTE + '/' + str(self.mock_equipment_id), data=update)
-    self.assertEqual(resp.get_json()['brand'], update['brand'])
+        resp = client.put(API_ROUTE + '/' + str(self.mock_equipment_id),
+                          data=update)
+        self.assertEqual(resp.get_json()['brand'], update['brand'])
 
-    # Set equipment info back to original state
-    resp = client.put(API_ROUTE + '/' + str(self.mock_equipment_id), data=MOCK_EQUIPMENT)
+        # Set equipment info back to original state
+        resp = client.put(API_ROUTE + '/' + str(self.mock_equipment_id),
+                          data=MOCK_EQUIPMENT)
 
-  def deletes_equipment(self, admin_client, regular_client):
-    admin_client.delete(API_ROUTE + '/' + str(self.mock_equipment_id))
+    def deletes_equipment(self, admin_client, regular_client):
+        admin_client.delete(API_ROUTE + '/' + str(self.mock_equipment_id))
 
-    resp = regular_client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
-    self.assertEqual(resp.status_code, 404)
-    
-  
-  def gets_equipment(self, client):
-    resp = client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
+        resp = regular_client.get(API_ROUTE + '/' +
+                                  str(self.mock_equipment_id))
+        self.assertEqual(resp.status_code, 404)
 
-    equip = MOCK_EQUIPMENT.copy()
-    equip['id'] = self.mock_equipment_id
+    def gets_equipment(self, client):
+        resp = client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
 
-    self.assertDictEqual(resp.get_json(), equip)
-  
-  def gets_equipment_list(self, client):
-    resp = client.get(API_ROUTE)
+        equip = MOCK_EQUIPMENT.copy()
+        equip['id'] = self.mock_equipment_id
 
-    actual = resp.get_json()
-    expected = [MOCK_EQUIPMENT, MOCK_EQUIPMENT_2]
+        self.assertDictEqual(resp.get_json(), equip)
 
-    for i in range(len(expected)):
-      # remove ids because they don't come with mock equipment data
-      del actual[i]['id']
+    def gets_equipment_list(self, client):
+        resp = client.get(API_ROUTE)
 
-      self.assertDictEqual(expected[i], actual[i])
+        actual = resp.get_json()
+        expected = [MOCK_EQUIPMENT, MOCK_EQUIPMENT_2]
 
-  def filters_equipment_list(self, client):
-    resp = client.get(API_ROUTE, query_string={'tag': '02'})
-    actual = resp.get_json()
+        for i in range(len(expected)):
+            # remove ids because they don't come with mock equipment data
+            del actual[i]['id']
 
-    # remove ids because they don't come with mock equipment data
-    del actual[0]['id']
+            self.assertDictEqual(expected[i], actual[i])
 
-    self.assertDictEqual(MOCK_EQUIPMENT_2, actual[0])
+    def filters_equipment_list(self, client):
+        resp = client.get(API_ROUTE, query_string={'tag': '02'})
+        actual = resp.get_json()
 
+        # remove ids because they don't come with mock equipment data
+        del actual[0]['id']
 
-  def test_equipment(self):
-    with self.assertNeedsPermission(Role.EQUIPMENT) as client:
-      self.creates_equipment(client)
-      self.tags_are_unique(client)
-      self.updates_equipment_info(client)
+        self.assertDictEqual(MOCK_EQUIPMENT_2, actual[0])
 
-      with self.mockUserClient([]) as regular_client:
-        self.gets_equipment(regular_client)
-        self.gets_equipment_list(regular_client)
-        self.filters_equipment_list(regular_client)
-        self.deletes_equipment(client, regular_client)
+    def test_equipment(self):
+        with self.assertNeedsPermission(Role.EQUIPMENT) as client:
+            self.creates_equipment(client)
+            self.tags_are_unique(client)
+            self.updates_equipment_info(client)
 
- 
+            with self.mockUserClient([]) as regular_client:
+                self.gets_equipment(regular_client)
+                self.gets_equipment_list(regular_client)
+                self.filters_equipment_list(regular_client)
+                self.deletes_equipment(client, regular_client)
