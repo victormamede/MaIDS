@@ -31,6 +31,7 @@ MOCK_LOGIN_NO_PERM = {
 
 MOCK_EQUIPMENT = {
     'tag': 'TAG0001',
+    'type_id': 1,
     'brand': 'TestBrand',
     'model': 'TestModel',
     'series': 'TestSeries'
@@ -38,7 +39,11 @@ MOCK_EQUIPMENT = {
 
 MOCK_EQUIPMENT_2 = {
     'tag': 'TAG0002',
+    'type_id': 1,
     'brand': 'TestBrand',
     'model': 'TestModel',
     'series': 'TestSeries'
 }
+
+MOCK_EQUIPMENT_TYPE = {'description': 'Balance'}
+MOCK_EQUIPMENT_TYPE_2 = {'description': 'Printer'}

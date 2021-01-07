@@ -1,6 +1,6 @@
 import unittest
 from .config import AppTestCase
-from .mocks import MOCK_EQUIPMENT, MOCK_EQUIPMENT_2, MOCK_EQUIPMENT
+from .mocks import MOCK_EQUIPMENT, MOCK_EQUIPMENT_2, MOCK_EQUIPMENT_TYPE
 
 from src.app.util.auth import Role
 
@@ -8,14 +8,29 @@ API_ROUTE = '/api/equipment'
 
 
 class TestEquipment(AppTestCase):
+    def setUp(self):
+        super().setUp()
+
+        resp = self.client.post(API_ROUTE + '/type',
+                                data=MOCK_EQUIPMENT_TYPE,
+                                headers=self.master_header)
+
+        self.mock_type = resp.get_json()
+
     def creates_equipment(self, client):
         resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
         client.post(API_ROUTE,
                     data=MOCK_EQUIPMENT_2)  # this will be used in later tests
 
-        self.mock_equipment_id = resp.get_json()['id']
+        resp_data = resp.get_json()
+        self.mock_equipment_id = resp_data['id']
+        del resp_data['id']
 
-        self.assertEqual(resp.status_code, 201)
+        expected = MOCK_EQUIPMENT.copy()
+        del expected['type_id']
+        expected['type'] = self.mock_type
+
+        self.assertDictEqual(resp_data, expected)
 
     def tags_are_unique(self, client):
         resp = client.post(API_ROUTE, data=MOCK_EQUIPMENT)
@@ -42,11 +57,14 @@ class TestEquipment(AppTestCase):
 
     def gets_equipment(self, client):
         resp = client.get(API_ROUTE + '/' + str(self.mock_equipment_id))
+        actual = resp.get_json()
+        del actual['id']
 
-        equip = MOCK_EQUIPMENT.copy()
-        equip['id'] = self.mock_equipment_id
+        expected = MOCK_EQUIPMENT.copy()
+        del expected['type_id']
+        expected['type'] = self.mock_type
 
-        self.assertDictEqual(resp.get_json(), equip)
+        self.assertDictEqual(actual, expected)
 
     def gets_equipment_list(self, client):
         resp = client.get(API_ROUTE)
@@ -58,7 +76,11 @@ class TestEquipment(AppTestCase):
             # remove ids because they don't come with mock equipment data
             del actual[i]['id']
 
-            self.assertDictEqual(expected[i], actual[i])
+            current_expected = expected[i].copy()
+            del current_expected['type_id']
+            current_expected['type'] = self.mock_type
+
+            self.assertDictEqual(current_expected, actual[i])
 
     def filters_equipment_list(self, client):
         resp = client.get(API_ROUTE, query_string={'tag': '02'})
@@ -67,7 +89,11 @@ class TestEquipment(AppTestCase):
         # remove ids because they don't come with mock equipment data
         del actual[0]['id']
 
-        self.assertDictEqual(MOCK_EQUIPMENT_2, actual[0])
+        expected = MOCK_EQUIPMENT_2.copy()
+        del expected['type_id']
+        expected['type'] = self.mock_type
+
+        self.assertDictEqual(expected, actual[0])
 
     def test_equipment(self):
         with self.assertNeedsPermission(Role.EQUIPMENT) as client:

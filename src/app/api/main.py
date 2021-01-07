@@ -3,6 +3,7 @@ from flask_restful import Api
 from .views.user import User, UserWithId
 from .views.auth import Auth, PasswordUpdate
 from .views.equipment import Equipment, EquipmentWithId
+from .views.equipment.type import EquipmentType, EquipmentTypeWithId
 
 
 def start_api(app):
@@ -19,3 +20,6 @@ def start_api(app):
 
     add_resource(Equipment, '/equipment')
     add_resource(EquipmentWithId, '/equipment/<int:id>')
+
+    add_resource(EquipmentType, '/equipment/type')
+    add_resource(EquipmentTypeWithId, '/equipment/type/<int:id>')
