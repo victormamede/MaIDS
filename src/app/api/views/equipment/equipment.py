@@ -28,6 +28,7 @@ class Equipment(Resource):
         results = EquipmentTable.query.filter(*[
             getattr(EquipmentTable, key).like(filters[key]) for key in filters
         ])
+
         equips = [equipment.as_dict() for equipment in results]
 
         return equips, 200
