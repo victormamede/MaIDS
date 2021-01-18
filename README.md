@@ -61,7 +61,7 @@ Create a file named `.env` at the root of the project with the following variabl
 
 ## 4.2. App
 
-- Start the app with `> python src\start.py`
+- Start the app with `> python3 start.py`
 - Run tests with `> python -m unittest discover tests`
 
 # 5 Todo

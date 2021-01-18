@@ -1,5 +1,5 @@
-import settings
-from app import build_app
+import src.settings
+from src.app import build_app
 
 app = build_app()
 
