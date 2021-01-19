@@ -1,3 +1,4 @@
+![MaIDS Logo](res/logo_colored.svg)
 # MaIDS - Mamede Industrial Data System <!-- omit in toc -->
 
 # Table of contents <!-- omit in toc -->
@@ -12,6 +13,7 @@
 - [4. How to run](#4-how-to-run)
   - [4.1. Dotenv](#41-dotenv)
   - [4.2. App](#42-app)
+- [5 Todo](#5-todo)
 
 # 1. Introduction
 
@@ -21,7 +23,9 @@ This project was created for my TCE (internship conclusion project), this is an 
 
 People who are working on a machine often don't know what to expect until they open it, technicians will have to juggle back and forth between doing research on the PC and working on the machine. The idea here is to have easy to get info at your disposal.
 
-## 1.2. Backup Control
+## 1.2. ~Backup Control~
+
+Update: Right, so this has much more requirements than I thought it would have, I think I'm going to scrape this idea, for now, I'm jumping to the password management system
 
 One of the necessities of the automation area is guaranteeing that we always have up to date machine backups, for that we need a system that handles the backup routine. The technician will execute the job and then confirm it was done, the system will handle the rest.
 
@@ -42,9 +46,9 @@ Every subsequent request that requires authentication will have to include the t
 
 - [x] User manager
 - [x] Authentication
-- [ ] Equipment system
-- [ ] Backup control
+- [x] Equipment system
 - [ ] Password manager
+- [ ] Backup control - To be scraped
 
 # 4. How to run
 
@@ -60,9 +64,10 @@ Create a file named `.env` at the root of the project with the following variabl
 
 ## 4.2. App
 
-- Start the app with `> python src\start.py`
+- Start the app with `> python3 start.py`
 - Run tests with `> python -m unittest discover tests`
 
-## 5 Todo
+# 5 Todo
 
 - Username and Password validation
+- Changes history / Audit trail
