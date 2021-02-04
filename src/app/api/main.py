@@ -4,6 +4,7 @@ from .views.user import User, UserWithId
 from .views.auth import Auth, PasswordUpdate
 from .views.equipment import Equipment, EquipmentWithId
 from .views.equipment.type import EquipmentType, EquipmentTypeWithId
+from .views.equipment.passwords import Password
 
 
 def start_api(app):
@@ -23,3 +24,5 @@ def start_api(app):
 
     add_resource(EquipmentType, "/equipment/type")
     add_resource(EquipmentTypeWithId, "/equipment/type/<int:id>")
+
+    add_resource(Password, "/equipment/<int:equip_id>/password")

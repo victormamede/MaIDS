@@ -1,10 +1,12 @@
 import unittest
+
+from flask.signals import got_request_exception
 from .config import AppTestCase
 from .mocks import MOCK_EQUIPMENT_TYPE, MOCK_EQUIPMENT, MOCK_USER, MOCK_PASSWORD
 
 from src.app.util.auth import Role
 
-API_ROUTE = "/api/equipment/1/passwords"
+API_ROUTE = "/api/equipment/1/password"
 
 
 class TestEquipment(AppTestCase):
@@ -28,6 +30,7 @@ class TestEquipment(AppTestCase):
         del resp_data["id"]
 
         expected = MOCK_PASSWORD.copy()
+        expected["equipment"] = self.mock_equipment
 
         self.assertDictEqual(resp_data, expected)
 
