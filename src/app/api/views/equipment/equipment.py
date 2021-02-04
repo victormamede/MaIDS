@@ -1,3 +1,4 @@
+from src.app.api.views.equipment.passwords.passwords import Password
 from flask_restful import Resource, abort
 from ..auth import with_auth
 from ....util.auth import Role
@@ -9,6 +10,7 @@ from .parser import (
 )
 
 from ....data.tables import Equipment as EquipmentTable
+from ....data.tables import Password as PasswordTable
 from ....data import session
 
 equipment_creation_parser = build_equipment_parser()
@@ -92,6 +94,10 @@ class EquipmentWithId(Resource):
         )
 
         session.delete(equipment)
+
+        ## TODO don't forget to test if it actually deletes passwords
+        # Also deletes passwords so we don't clutter the database
+        PasswordTable.query.filter_by(equipment_id=equipment.id).delete()
         session.commit()
 
         return {"message": "deleted"}, 200
