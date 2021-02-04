@@ -3,6 +3,8 @@ from ...util.auth import Role, encode_roles, decode_roles
 
 import bcrypt
 
+DEFAULT_PASSWORD_LEVEL = 5
+
 
 class User(db.Model):
     __tablename__ = "user"
@@ -14,6 +16,9 @@ class User(db.Model):
     registration_number = db.Column(db.Integer, nullable=False, unique=True)
     _roles = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String, nullable=False)
+    password_level = db.Column(
+        db.Integer, nullable=False, default=DEFAULT_PASSWORD_LEVEL
+    )
 
     def __init__(self, **kwargs):
         kwargs["_roles"] = encode_roles(*kwargs["roles"])
@@ -37,6 +42,7 @@ class User(db.Model):
             "registration_number": self.registration_number,
             "roles": [role.name for role in self.roles],
             "email": self.email,
+            "password_level": self.password_level,
         }
 
     @property

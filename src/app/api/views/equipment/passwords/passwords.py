@@ -15,15 +15,20 @@ password_creation_parser = build_password_parser()
 
 
 class Password(Resource):
-    """
     @with_auth()
     def get(self, **kw):
-        equipment = EquipmentTable.query.filter_by(id=kw["id"]).first_or_404(
+        equipment = EquipmentTable.query.filter_by(id=kw["equip_id"]).first_or_404(
             description="Equipment not found"
         )
+        user = UserTable.query.filter_by(id=kw["user_id"]).first_or_404(
+            description="User not found"
+        )
 
-        return equipment.as_dict(), 200
-    """
+        passwords = PasswordTable.query.filter(
+            PasswordTable.level >= user.password_level
+        ).all()
+
+        return [password.as_dict() for password in passwords]
 
     @with_auth(Role.PASSWORDS)
     def post(self, **kw):
@@ -32,8 +37,8 @@ class Password(Resource):
         )
         args = password_creation_parser.parse_args()
 
-        if "user_id" in args:
-            UserTable.query.filter_by(id=kw["user_id"]).first_or_404(
+        if args["user_id"] != None:
+            UserTable.query.filter_by(id=args["user_id"]).first_or_404(
                 description="User not found"
             )
 

@@ -34,6 +34,18 @@ class TestEquipment(AppTestCase):
 
         self.assertDictEqual(resp_data, expected)
 
+    def gets_password(self, client):
+        resp = client.get(API_ROUTE)
+
+        expected = MOCK_PASSWORD.copy()
+        expected["equipment"] = self.mock_equipment
+        expected["id"] = 1
+
+        self.assertDictEqual(expected, resp.get_json()[0])
+
     def test_password(self):
         with self.assertNeedsPermission(Role.PASSWORDS) as client:
             self.creates_password(client)
+
+            with self.mockUserClient([]) as regular_client:
+                self.gets_password(regular_client)
