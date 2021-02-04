@@ -2,8 +2,11 @@ from flask_restful import Resource, abort
 from ..auth import with_auth
 from ....util.auth import Role
 
-from .parser import (build_equipment_parser, build_equipment_update_parser,
-                     build_equipment_filter_parser)
+from .parser import (
+    build_equipment_parser,
+    build_equipment_update_parser,
+    build_equipment_filter_parser,
+)
 
 from ....data.tables import Equipment as EquipmentTable
 from ....data import session
@@ -22,12 +25,12 @@ class Equipment(Resource):
             if args[key] is None:
                 continue
 
-            search = '%{}%'.format(args[key])
+            search = "%{}%".format(args[key])
             filters[key] = search
 
-        results = EquipmentTable.query.filter(*[
-            getattr(EquipmentTable, key).like(filters[key]) for key in filters
-        ])
+        results = EquipmentTable.query.filter(
+            *[getattr(EquipmentTable, key).like(filters[key]) for key in filters]
+        )
 
         equips = [equipment.as_dict() for equipment in results]
 
@@ -44,7 +47,7 @@ class Equipment(Resource):
             session.commit()
         except Exception as e:
             session.rollback()
-            abort(409, message='Could not create equipment')
+            abort(409, message="Could not create equipment")
 
         return new_equipment.as_dict(), 201
 
@@ -55,15 +58,17 @@ equipment_update_parser = build_equipment_update_parser()
 class EquipmentWithId(Resource):
     @with_auth()
     def get(self, **kw):
-        equipment = EquipmentTable.query.filter_by(id=kw['id']).first_or_404(
-            description='Equipment not found')
+        equipment = EquipmentTable.query.filter_by(id=kw["id"]).first_or_404(
+            description="Equipment not found"
+        )
 
         return equipment.as_dict(), 200
 
     @with_auth(Role.EQUIPMENT)
     def put(self, **kw):
-        equipment = EquipmentTable.query.filter_by(id=kw['id']).first_or_404(
-            description='Equipment not found')
+        equipment = EquipmentTable.query.filter_by(id=kw["id"]).first_or_404(
+            description="Equipment not found"
+        )
         args = equipment_update_parser.parse_args()
 
         for key in args:
@@ -76,16 +81,17 @@ class EquipmentWithId(Resource):
             session.commit()
         except Exception as e:
             session.rollback()
-            abort(409, message='Could not update equipment')
+            abort(409, message="Could not update equipment")
 
         return equipment.as_dict(), 200
 
     @with_auth(Role.EQUIPMENT)
     def delete(self, **kw):
-        equipment = EquipmentTable.query.filter_by(id=kw['id']).first_or_404(
-            description='Equipment not found')
+        equipment = EquipmentTable.query.filter_by(id=kw["id"]).first_or_404(
+            description="Equipment not found"
+        )
 
         session.delete(equipment)
         session.commit()
 
-        return {'message': 'deleted'}, 200
+        return {"message": "deleted"}, 200

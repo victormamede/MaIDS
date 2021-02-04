@@ -11,7 +11,7 @@ def encode_roles(*roles):
         except KeyError:
             continue
 
-        if (role in used_roles):
+        if role in used_roles:
             continue
 
         used_roles.add(role)

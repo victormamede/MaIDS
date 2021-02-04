@@ -8,7 +8,7 @@ class TestRoleEncoder(unittest.TestCase):
         self.assertEqual(encoded, 0)
 
     def test_encode_roles(self):
-        encoded = encode_roles('ACCOUNTS', 'EQUIPMENT')
+        encoded = encode_roles("ACCOUNTS", "EQUIPMENT")
         self.assertEqual(encoded, 3)
 
     def test_decode_roles(self):
@@ -16,11 +16,11 @@ class TestRoleEncoder(unittest.TestCase):
         self.assertSetEqual(decoded, {Role.ACCOUNTS, Role.EQUIPMENT})
 
     def test_ignores_repeated_roles(self):
-        encoded = encode_roles('ACCOUNTS', 'EQUIPMENT', 'ACCOUNTS',
-                               'EQUIPMENT')
+        encoded = encode_roles("ACCOUNTS", "EQUIPMENT", "ACCOUNTS", "EQUIPMENT")
         self.assertEqual(encoded, 3)
 
     def test_ignores_invalid_roles(self):
-        encoded = encode_roles('CHILDREN_TOY', 'ELECTRIC_MOTOR', 'ACCOUNTS',
-                               'DEFAULT', 'EQUIPMENT')
+        encoded = encode_roles(
+            "CHILDREN_TOY", "ELECTRIC_MOTOR", "ACCOUNTS", "DEFAULT", "EQUIPMENT"
+        )
         self.assertEqual(encoded, 3)
