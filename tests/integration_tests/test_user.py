@@ -11,7 +11,16 @@ class TestUser(AppTestCase):
         resp = client.post(API_ROUTE, data=MOCK_USER)
         self.mock_user_id = resp.get_json()["id"]
 
-        self.assertEqual(MOCK_USER["username"], resp.get_json()["username"])
+        expected = MOCK_USER.copy()
+
+        result = resp.get_json()
+        del result["id"]
+
+        # Roles might come in a random order, don't wanna test this now
+        del expected["roles"]
+        del result["roles"]
+
+        self.assertEqual(expected, result)
 
     def user_cant_have_same_data(self, client):
         resp = client.post(API_ROUTE, data=MOCK_USER)

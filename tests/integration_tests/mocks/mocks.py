@@ -4,6 +4,7 @@ MOCK_USER = {
     "registration_number": 123,
     "roles": ["ACCOUNTS", "EQUIPMENT"],
     "email": "test@user.com",
+    "password_level": 3,
 }
 
 MOCK_USER_2 = {
@@ -12,6 +13,7 @@ MOCK_USER_2 = {
     "registration_number": 124,
     "roles": ["ACCOUNTS", "EQUIPMENT"],
     "email": "test2@user.com",
+    "password_level": 5,
 }
 
 MOCK_LOGIN = {"username": "testuser", "password": "testpass"}
@@ -45,4 +47,4 @@ MOCK_EQUIPMENT_2 = {
 MOCK_EQUIPMENT_TYPE = {"description": "Balance"}
 MOCK_EQUIPMENT_TYPE_2 = {"description": "Printer"}
 
-MOCK_PASSWORD = {"level": 0, "username": "test", "password": "testPass"}
+MOCK_PASSWORD = {"level": 5, "username": "test", "password": "testPass"}

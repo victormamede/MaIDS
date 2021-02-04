@@ -41,6 +41,9 @@ class User(Resource):
     def post(self):
         args = user_creation_parser.parse_args()
 
+        if args["password_level"] is None:
+            del args["password_level"]
+
         new_user = UserTable(**args)
 
         try:

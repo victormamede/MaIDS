@@ -15,6 +15,7 @@ def build_user_creation_parser():
         choices=[*[role.name for role in list(Role)], "NONE"],
     )
     parser.add_argument("email", type=str, required=True)
+    parser.add_argument("password_level", type=int)
 
     return parser
 
