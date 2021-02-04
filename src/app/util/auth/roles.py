@@ -5,6 +5,7 @@ import enum
 class Role(enum.Enum):
     ACCOUNTS = 0
     EQUIPMENT = 1
+    PASSWORDS = 2
 
     @staticmethod
     def all():

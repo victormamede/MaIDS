@@ -1,0 +1,6 @@
+- Passwords should have a parent equipment and optionally a parent user
+- Passwords should have a level
+- Users should be able to view the password if, and only if:
+  - their level is HIGHER than the password level,
+  - the password belongs to them
+- The first password in the list should be the the user's highest level password
