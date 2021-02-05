@@ -47,4 +47,4 @@ MOCK_EQUIPMENT_2 = {
 MOCK_EQUIPMENT_TYPE = {"description": "Balance"}
 MOCK_EQUIPMENT_TYPE_2 = {"description": "Printer"}
 
-MOCK_PASSWORD = {"level": 5, "username": "test", "password": "testPass"}
+MOCK_PASSWORD = {"username": "test", "password": "testPass"}

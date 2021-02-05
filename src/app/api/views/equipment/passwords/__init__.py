@@ -1,1 +1,1 @@
-from .passwords import Password
+from .passwords import Password, UserPassword, LevelPassword
