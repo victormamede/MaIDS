@@ -6,6 +6,7 @@ from .decorator import password_with_id
 from .parser import (
     build_user_password_parser,
     build_level_password_parser,
+    build_update_password_parser,
 )
 
 from .....data.tables import Password as PasswordTable
@@ -15,6 +16,7 @@ from .....data import session
 
 user_password_creation_parser = build_user_password_parser()
 level_password_creation_parser = build_level_password_parser()
+update_password_parser = build_update_password_parser()
 
 
 class Password(Resource):
@@ -39,6 +41,36 @@ class PasswordWithId(Resource):
     @password_with_id
     def get(self, **kw):
         return kw["password"].as_dict(), 200
+
+    @password_with_id
+    def put(self, **kw):
+        password = kw["password"]
+        args = update_password_parser.parse_args()
+
+        for key in args:
+            if args[key] == None:
+                continue
+
+            setattr(password, key, args[key])
+
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            abort(409, message="Could not update password")
+
+        return password.as_dict(), 200
+
+    @with_auth(Role.PASSWORDS)
+    def delete(self, **kw):
+        password = PasswordTable.query.filter_by(id=kw["id"]).first_or_404(
+            description="Password not found"
+        )
+
+        session.delete(password)
+        session.commit()
+
+        return {"message": "deleted"}, 200
 
 
 class UserPassword(Resource):

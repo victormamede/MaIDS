@@ -95,21 +95,33 @@ class TestEquipment(AppTestCase):
         self.assertDictEqual(resp_data, expected)
 
     def can_update_my_password(self, client):
-        """
         update = {"password": "new_password"}
 
-        resp = client.put(API_ROUTE + "/" + str(self.mock_equipment_id), data=update)
-        self.assertEqual(resp.get_json()["brand"], update["brand"])
+        resp = client.put(f"{API_ROUTE}/{self.mock_user_password_id}", data=update)
 
-        # Set equipment info back to original state
-        resp = client.put(
-            API_ROUTE + "/" + str(self.mock_equipment_id), data=MOCK_EQUIPMENT
-        )
-        """
-        pass
+        self.assertEqual(resp.status_code, 200)
+
+        resp = client.get(f"{API_ROUTE}/{self.mock_user_password_id}")
+
+        self.assertEqual(resp.get_json()["password"], update["password"])
 
     def cannot_update_others_password(self, client):
-        pass
+        update = {"password": "new_password"}
+
+        resp = client.put(f"{API_ROUTE}/{self.mock_user_password_id}", data=update)
+
+        self.assertEqual(resp.status_code, 401)
+
+    def deletes_password(self, client):
+        resp = client.delete(f"{API_ROUTE}/{self.mock_level_password_id}")
+
+        self.assertEqual(resp.status_code, 200)
+
+        client.disable_checking()
+        resp = client.get(f"{API_ROUTE}/{self.mock_level_password_id}")
+
+        self.assertEqual(resp.status_code, 404)
+        client.enable_checking()
 
     def test_password(self):
         with self.assertNeedsPermission(Role.PASSWORDS) as client:
@@ -121,6 +133,8 @@ class TestEquipment(AppTestCase):
                 self.gets_password(regular_client)
                 self.gets_password_by_id(client, regular_client)
                 self.can_update_my_password(regular_client)
+
+                self.deletes_password(client)
 
         with self.mockUserClient([]) as third_party:
             self.cannot_get_others_password_by_id(third_party)

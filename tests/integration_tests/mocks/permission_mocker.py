@@ -7,6 +7,7 @@ class PermissionMocker:
         self.parent = parent
         self.client = parent.client
         self.master_header = parent.master_header
+        self.enabled = True
 
     def __enter__(self):
         self.perm_user = MockUserClient(
@@ -24,6 +25,12 @@ class PermissionMocker:
 
         self.perm_user.__exit__(type, value, tb)
         self.no_perm_user.__exit__(type, value, tb)
+
+    def disable_checking(self):
+        self.enabled = False
+
+    def enable_checking(self):
+        self.enabled = True
 
     def get(self, url, **kwargs):
         resp = self.perm_user.get(url, **kwargs)
@@ -58,10 +65,13 @@ class PermissionMocker:
         return resp
 
     def _check_result(self, with_perm_status_code, no_perm_status_code):
+        if not self.enabled:
+            return
+
         if with_perm_status_code == 401:
-            raise PermissionException(True)
+            raise PermissionException(True, with_perm_status_code)
         if no_perm_status_code != 401:
-            raise PermissionException(False)
+            raise PermissionException(False, no_perm_status_code)
 
 
 PERMISSION_MOCK_USER = {
@@ -80,10 +90,12 @@ NO_PERMISSION_MOCK_USER = {
 
 
 class PermissionException(Exception):
-    def __init__(self, with_perm_error):
+    def __init__(self, with_perm_error, status_code):
         if with_perm_error:
-            message = "Error while trying to request with required permissions"
+            message = f"Error while trying to request with required permissions, expected: {401}, got {status_code}"
         else:
-            message = "Error while trying to request without permission"
+            message = (
+                f"Error while trying to request without permission, got {status_code}"
+            )
 
         super().__init__(message)
