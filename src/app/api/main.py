@@ -1,10 +1,16 @@
+from src.app.api.views.equipment.passwords.passwords import PasswordWithId
 from flask_restful import Api
 
 from .views.user import User, UserWithId
 from .views.auth import Auth, PasswordUpdate
 from .views.equipment import Equipment, EquipmentWithId
 from .views.equipment.type import EquipmentType, EquipmentTypeWithId
-from .views.equipment.passwords import Password, LevelPassword, UserPassword
+from .views.equipment.passwords import (
+    Password,
+    PasswordWithId,
+    LevelPassword,
+    UserPassword,
+)
 
 
 def start_api(app):
@@ -26,5 +32,6 @@ def start_api(app):
     add_resource(EquipmentTypeWithId, "/equipment/type/<int:id>")
 
     add_resource(Password, "/equipment/<int:equip_id>/password")
+    add_resource(PasswordWithId, "/password/<int:id>")
     add_resource(UserPassword, "/equipment/<int:equip_id>/password/user")
     add_resource(LevelPassword, "/equipment/<int:equip_id>/password/level")

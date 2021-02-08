@@ -1,7 +1,9 @@
+from random import random
+
 DEFAULT_MOCK_USER = {
     "username": "mockusertest",
     "real_name": "Test Mock User",
-    "registration_number": 3502,
+    "registration_number": int(random() * 1000),
     "email": "mockusertest@user.com",
 }
 
@@ -35,7 +37,7 @@ class MockUserClient:
         return self
 
     def __exit__(self, type, value, tb):
-        self.client.delete(
+        resp = self.client.delete(
             "api/user/" + str(self.user_data["id"]), headers=self.master_header
         )
 

@@ -2,6 +2,7 @@ from flask_restful import Resource, abort
 from ...auth import with_auth
 from .....util.auth import Role
 
+from .decorator import password_with_id
 from .parser import (
     build_user_password_parser,
     build_level_password_parser,
@@ -34,6 +35,12 @@ class Password(Resource):
         return [password.as_dict() for password in [*user_passwords, *level_passwords]]
 
 
+class PasswordWithId(Resource):
+    @password_with_id
+    def get(self, **kw):
+        return kw["password"].as_dict(), 200
+
+
 class UserPassword(Resource):
     @with_auth(Role.PASSWORDS)
     def post(self, **kw):
@@ -53,7 +60,6 @@ class UserPassword(Resource):
             session.add(new_password)
             session.commit()
         except Exception as e:
-            print(e)
             session.rollback()
             abort(409, message="Could not create password")
 
